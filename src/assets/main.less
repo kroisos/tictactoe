@@ -1,0 +1,120 @@
+@title-color: rgb(160, 105, 33);
+@title-color-dark: rgb(80, 52, 16);
+@backdrop-color: rgb(125, 186, 255);
+@text-color: rgb(114, 72, 5);
+@text-highlight-color: rgb(204, 139, 34);
+@player-color: rgb(214, 208, 192);
+@opponent-color: rgb(31, 23, 3);
+@ambient-color: rgb(182, 225, 240); 
+@grid-window-offset: 124px;
+
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  margin-top: 60px;
+}
+
+html * {
+  font-family: Acme !important;
+  background-color: @backdrop-color;
+}
+
+h1, h2 {
+  color: @title-color;
+  font-weight: normal;
+  font-size: 4.2em;
+  border-color: @title-color; 
+
+  .light {
+    color: @text-color;
+  }
+
+  .dark {
+    color: @title-color-dark;
+  }
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+}
+li {
+	display: inline-block;
+	margin: 0 10px;
+}
+a {
+	color: @text-highlight-color;
+}
+p {
+  color: @text-color;
+}
+p .light {
+  color: @text-highlight-color;
+}
+
+
+.main div {
+  text-align: center;
+  margin: auto;
+}
+
+button {
+  margin-top: 16px;
+  font-size: 4.2em;
+  color: @title-color;
+  background-color: @ambient-color;
+  font-weight: bold;
+  width: 6.4em;
+  height: 3.2em;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: @text-color;
+}
+
+.gridWrapper {
+  width: calc(100% - 240px);
+  display: grid;
+  border-width:  4px;
+  border-radius: 2px;
+  border-style: solid;
+  border-color: @text-color;
+}
+
+.gridCell::before {
+  content: "";
+  display: block;
+  height: 0;
+  width: 0;
+  padding-bottom: 100%;
+  padding-left: 100%;
+}
+
+.gridCell {
+  position: relative;
+  display: block;
+  border-width: 1px;
+  border-style: solid;
+  background-color: @backdrop-color;
+  border-color: @title-color;
+}
+
+.piece {
+  position: absolute;
+  top: 4%;
+  left: 8%;
+  width: 84%;
+  height: 96%;
+  border-radius: 50%;
+}
+
+.piecePlayer {
+  .piece;
+  background-color: @player-color;
+}
+
+.pieceOpponent {
+  .piece;
+  background-color: @opponent-color;
+}
