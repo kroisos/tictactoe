@@ -1,28 +1,28 @@
 <template>
-  <div class="gridWrapper"
-    v-bind:style="grid.wrapper">
-    <span v-for="col in grid.cols" v-bind:key="col.id">
-      <span v-for="(cell, iCell) in col" v-bind:key="iCell">
-        <GridCell v-bind:input="cell"></GridCell>
+  <div class="gridWrapper" :style="grid.wrapper">
+    <span v-for="col in grid.cols" :key="col.id">
+      <span v-for="(cell, iCell) in col" :key="iCell">
+        <GridCell :input="cell" @selected="onCellSelected"></GridCell>
       </span>
     </span>
   </div>
 </template>
 
 <script>
+import { Component } from '../util/vue';
+import FlipPiece from '../game/FlipPiece';
 import GridCell from './GridCell';
 
-const buildGrid = (width, height, pieces) => {
+const renderGrid = (width, height, pieces) => {
   const cols = new Array(width);
-
   for (let x = 0; x < width; x += 1) {
     cols[x] = new Array(height);
     for (let y = 0; y < height; y += 1) {
-      const gridCell = { x, y };
+      const gridCell = { id: Component.Id.GridCell(x, y), x, y };
 
       const piece = pieces.find(p => p && p.x === x && p.y === y);
       if (piece) {
-        gridCell.piece = piece.player;
+        gridCell.player = piece.player;
       }
       cols[x][y] = gridCell;
     }
@@ -35,6 +35,14 @@ export default {
   name: 'grid',
   components: {
     GridCell,
+  },
+  methods: {
+    onCellSelected(piece) {
+      const { dispatch } = this.$store;
+      const { pieces } = this.$store.getters;
+      const piecesToFlip = FlipPiece(piece, pieces);
+      dispatch('flipPieces', { piecesToFlip }).then(() => dispatch('setNextTurn'));
+    },
   },
   computed: {
     grid() {
@@ -56,7 +64,7 @@ export default {
       };
       return {
         wrapper,
-        cols: buildGrid(width, height, pieces),
+        cols: renderGrid(width, height, pieces),
       };
     },
   },

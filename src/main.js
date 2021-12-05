@@ -5,7 +5,7 @@ import Vuex from 'vuex';
 import App from './App';
 import router from './router';
 import './assets/main.less';
-import moduleGameGrid from './module/game';
+import GameStore from './store/game';
 
 Vue.config.productionTip = false;
 
@@ -22,7 +22,7 @@ const { width, height } = settingsDefault.grid;
 
 const store = new Vuex.Store({
   modules: {
-    game: moduleGameGrid({ width, height }),
+    game: GameStore({ width, height }),
   },
 });
 
