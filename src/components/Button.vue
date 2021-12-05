@@ -1,7 +1,11 @@
 <template>
   <li>
     <ul>
-      <button class="button" type="button" @click="click">{{ title }}</button>
+      <button
+        class="button"
+        type="button"
+        @click="click"
+      >{{ title }}</button>
     </ul>
   </li>
 </template>

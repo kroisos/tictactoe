@@ -1,15 +1,17 @@
-function GameStore(options) {
-  const { width, height } = options;
+function GameStore(initialState) {
+  // Save copy of initialState
+  const firstState = {
+    pieces: initialState.startingPieces,
+    players: [0, 1],
+    turnPlayer: 0,
+    turnNumber: 0,
+    userLocked: false,
+  };
 
   return {
     state: () => ({
-      width,
-      height,
-      pieces: [],
-      players: [0, 1],
-      turnPlayer: 0,
-      turnNumber: 0,
-      userLocked: false,
+      ...firstState,
+      pieces: [...firstState.pieces],
     }),
     mutations: {
       putPiece(state, payload) {
@@ -20,14 +22,16 @@ function GameStore(options) {
       setNextTurn(state) {
         const { players } = state;
         state.turnNumber++;
-        state.turnPlayer = (state.turnNumber + players.length) % players.length;
+        state.turnPlayer =
+          (state.turnNumber + players.length) % players.length;
         state.userLocked = false;
       },
       flipPieces(state, payload) {
         const { piecesToFlip } = payload;
 
         state.pieces = state.pieces.map(({ x, y, player }) => {
-          const toFlip = piecesToFlip.find(p => p.x === x && p.y === y);
+          const toFlip = piecesToFlip.find(
+            p => p.x === x && p.y === y);
 
           if (toFlip) {
             if (toFlip.player === 1) {
@@ -36,6 +40,12 @@ function GameStore(options) {
             return { x, y, player: 1 };
           }
           return { x, y, player };
+        });
+      },
+      reset(state) {
+        debugger;
+        Object.keys(firstState).forEach((k) => {
+          state[k] = firstState[k];
         });
       },
     },
@@ -49,10 +59,11 @@ function GameStore(options) {
       flipPieces({ commit }, payload) {
         commit('flipPieces', payload);
       },
+      reset({ commit }) {
+        commit('reset');
+      },
     },
     getters: {
-      width: state => state.width,
-      height: state => state.height,
       pieces: state => state.pieces,
       players: state => state.players,
       turnPlayer: state => state.turnPlayer,

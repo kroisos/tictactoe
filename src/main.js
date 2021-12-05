@@ -6,23 +6,27 @@ import App from './App';
 import router from './router';
 import './assets/main.less';
 import GameStore from './store/game';
+import SettingsStore from './store/settings';
 
 Vue.config.productionTip = false;
 
 Vue.use(Vuex);
 
 const settingsDefault = {
-  grid: {
-    width: 7,
-    height: 6,
-  },
+  width: 8,
+  height: 8,
+  startingPieces: [
+    { x: 3, y: 3, player: 0 },
+    { x: 4, y: 4, player: 0 },
+    { x: 4, y: 3, player: 1 },
+    { x: 3, y: 4, player: 1 },
+  ],
 };
-
-const { width, height } = settingsDefault.grid;
 
 const store = new Vuex.Store({
   modules: {
-    game: GameStore({ width, height }),
+    settings: SettingsStore(settingsDefault),
+    game: GameStore(settingsDefault),
   },
 });
 

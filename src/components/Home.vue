@@ -5,7 +5,7 @@
       <Button
         id="play"
         type="button"
-        v-bind:title="texts.button.play"
+        :title="texts.button.play"
         @click="toGame"
       ></Button>
     </div>
@@ -13,7 +13,7 @@
       <Button
         id="settings"
         type="button"
-        v-bind:title="texts.button.settings"
+        :title="texts.button.settings"
         @click="toSettings"
       ></Button>
     </div>
@@ -21,7 +21,7 @@
       <Button
         id="water"
         type="button"
-        v-bind:title="texts.button.water"
+        :title="texts.button.water"
         @click="toWater"
       ></Button>
     </div>

@@ -1,5 +1,5 @@
 const routes = {
-  root: '/',
+  home: '/',
   game: '/game',
   settings: '/settings',
   water: '/watereverywhere',
