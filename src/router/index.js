@@ -26,7 +26,7 @@ export default new Router({
     // },
     {
       path: routes.water,
-      name: '404',
+      name: '418',
       component: NotFound,
       props: {
         water: true,

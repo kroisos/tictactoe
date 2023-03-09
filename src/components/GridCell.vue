@@ -1,12 +1,15 @@
 <template>
   <div class="gridCell" @click="selectCell">
-    <span :id="input.id" :class="[cellClass]">
+    <span :id="body.id" :class="[cellClass]">
     </span>
   </div>
 </template>
 
 <script>
-import anime from 'animejs/lib/anime';
+import {
+  AnimFlipPiece,
+  AnimPutPiece,
+} from '../animate/piece';
 
 export default {
   name: 'gridCell',
@@ -14,28 +17,27 @@ export default {
     'clickable',
     'selected',
     'onSelect',
-    'input',
+    'body',
   ],
   watch: {
-    input(nInput, oInput) {
-      if (nInput.player !== oInput.player) {
-        anime({
-          targets: `#${nInput.id}`,
-          rotateX: {
-            value: ['180deg', '0deg'],
-            duration: 700,
-          },
-        });
+    body(newBody) {
+      console.log(`FLIP: ${newBody.flipping ? newBody.id : ''}`);
+      if (newBody.flipping) {
+        // console.log(newBody.id);
+        AnimFlipPiece(
+          newBody.id,
+          () => this.$store.dispatch('flipPieceComplete', { ...newBody }),
+        );
       }
     },
   },
   computed: {
     cellClass() {
-      const { input } = this.$props;
-      switch (input.player) {
-        case 0:
-          return 'piecePlayer';
+      const { body } = this.$props;
+      switch (body.player) {
         case 1:
+          return 'piecePlayer';
+        case 2:
           return 'pieceOpponent';
         default:
           return '';
@@ -46,20 +48,15 @@ export default {
     selectCell() {
       const { userLocked, turnPlayer } = this.$store.getters;
       const {
-        input,
+        body,
       } = this.$props;
-      const { id, x, y, player } = input;
+      const { id, x, y } = body;
+      const newBody = { x, y, player: turnPlayer };
 
-      if (!userLocked && isNaN(player)) {
-        this.$store.dispatch('putPiece', { x, y, player: turnPlayer }).then(() => {
-          anime({
-            targets: `#${id}`,
-            rotateX: {
-              value: ['180deg', '0deg'],
-              duration: 700,
-            },
-            complete: () => this.$emit('selected', { x, y, player: turnPlayer }),
-          });
+      if (!userLocked && newBody.player > 0) {
+        this.$store.dispatch('putPiece', newBody).then(() => {
+          AnimPutPiece(id, () => this.$store.dispatch('setNextTurn', newBody), null);
+          this.$emit('selected', newBody);
         });
       }
     },

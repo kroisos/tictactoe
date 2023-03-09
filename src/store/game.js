@@ -1,52 +1,66 @@
+import { NullPiece } from "../game/piece";
+
 function GameStore(initialState) {
   // Save copy of initialState
   const firstState = {
-    pieces: initialState.startingPieces,
-    players: [0, 1],
-    turnPlayer: 0,
+    pieces: [...initialState.startingPieces],
+    players: [1, 2],
+    turnPlayer: 1,
     turnNumber: 0,
     userLocked: false,
+    ...initialState,
   };
 
   return {
-    state: () => ({
+    state: {
+      pieces: [...firstState.startingPieces],
+      players: [...firstState.players],
       ...firstState,
-      pieces: [...firstState.pieces],
-    }),
+    },
     mutations: {
-      putPiece(state, payload) {
-        state.userLocked = true;
-        const { x, y, player } = payload;
-        state.pieces.push({ x, y, player });
-      },
       setNextTurn(state) {
         const { players } = state;
         state.turnNumber++;
-        state.turnPlayer =
-          (state.turnNumber + players.length) % players.length;
+        state.turnPlayer = 1 + ((state.turnNumber + players.length) % players.length);
         state.userLocked = false;
       },
-      flipPieces(state, payload) {
+      putPiece(state, payload) {
+        state.userLocked = true;
+        const { x, y, player } = payload;
+        state.pieces.push({ ...NullPiece, x, y, player });
+      },
+      flipPiecesBegin(state, payload) {
         const { piecesToFlip } = payload;
 
-        state.pieces = state.pieces.map(({ x, y, player }) => {
-          const toFlip = piecesToFlip.find(
-            p => p.x === x && p.y === y);
-
-          if (toFlip) {
-            if (toFlip.player === 1) {
-              return { x, y, player: 0 };
-            }
-            return { x, y, player: 1 };
-          }
-          return { x, y, player };
+        // https://v2.vuejs.org/v2/guide/reactivity.html#For-Arrays
+        state.pieces.forEach((piece, i) => {
+          const { x, y } = piece;
+          const toFlip = piecesToFlip.findIndex(p => p.x === x && p.y === y);
+          state.pieces.splice(
+            i, 1, toFlip < 0 ? { ...piece } : { ...piece, flipping: true });
         });
       },
+      flipPieceComplete(state, payload) {
+        const { x, y } = payload;
+
+        const iPiece = state.pieces.findIndex(p => p.x === x && p.y === y)
+        const newPiece = { ...state.pieces[iPiece] };
+
+        if (newPiece.player === 1) {
+          newPiece.player = 2;
+        } else {
+          newPiece.player = 1;
+        }
+        newPiece.flipping = false;
+
+        state.pieces.splice(iPiece, 1, newPiece);
+      },
       reset(state) {
-        debugger;
-        Object.keys(firstState).forEach((k) => {
-          state[k] = firstState[k];
-        });
+        state.pieces = [...firstState.startingPieces];
+        state.players = [...firstState.players];
+        state.turnPlayer = firstState.turnPlayer;
+        state.turnNumber = firstState.turnNumber;
+        state.userLocked = firstState.false;
       },
     },
     actions: {
@@ -56,8 +70,11 @@ function GameStore(initialState) {
       setNextTurn({ commit }, payload) {
         commit('setNextTurn', payload);
       },
-      flipPieces({ commit }, payload) {
-        commit('flipPieces', payload);
+      flipPiecesBegin({ commit }, payload) {
+        commit('flipPiecesBegin', payload);
+      },
+      flipPieceComplete({ commit }, payload) {
+        commit('flipPieceComplete', payload);
       },
       reset({ commit }) {
         commit('reset');

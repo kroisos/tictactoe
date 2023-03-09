@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import App from './App';
 import router from './router';
 import './assets/main.less';
+import { NullPiece } from './game/piece';
 import GameStore from './store/game';
 import SettingsStore from './store/settings';
 
@@ -16,10 +17,10 @@ const settingsDefault = {
   width: 8,
   height: 8,
   startingPieces: [
-    { x: 3, y: 3, player: 0 },
-    { x: 4, y: 4, player: 0 },
-    { x: 4, y: 3, player: 1 },
-    { x: 3, y: 4, player: 1 },
+    { ...NullPiece, x: 3, y: 3, player: 1 },
+    { ...NullPiece, x: 4, y: 4, player: 1 },
+    { ...NullPiece, x: 4, y: 3, player: 2 },
+    { ...NullPiece, x: 3, y: 4, player: 2 },
   ],
 };
 
